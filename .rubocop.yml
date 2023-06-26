@@ -1,0 +1,13 @@
+# Exclude directories that you don't want to analyze
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+    - 'db/**/*'
+    - 'config/**/*'
+    # Add more excluded directories if needed
+
+# Configure which files/directories to include for analysis
+Include:
+  - 'app/controllers/**/*'
+  - 'app/models/**/*'
+  # Add more directories or files to include if needed
