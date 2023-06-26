@@ -19,7 +19,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
+          ruby-version: 3.x
 
       - name: Install dependencies
         run: |
@@ -28,3 +28,11 @@ jobs:
 
       - name: Run RuboCop
         run: bundle exec rubocop
+
+      - name: Check RuboCop offenses
+        run: |
+          OUTPUT=$(bundle exec rubocop --format simple)
+          if echo "$OUTPUT" | grep -E '^(?:Offenses|==).*[1-9][0-9]* .*file' ; then
+            echo "RuboCop offenses found. Please fix them before merging."
+            exit 1
+          fi
