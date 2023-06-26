@@ -1,13 +1,26 @@
-# Exclude directories that you don't want to analyze
 AllCops:
+  NewCops: enable
+  DisplayStyleGuide: true
+  DisplayCopNames: true
+  SuggestExtensions: false
+  Include:
+    - 'app/controllers/**/*.rb'
+    - 'app/models/**/*.rb'
   Exclude:
-    - 'vendor/**/*'
-    - 'db/**/*'
-    - 'config/**/*'
-    # Add more excluded directories if needed
-
-# Configure which files/directories to include for analysis
-Include:
-  - 'app/controllers/**/*'
-  - 'app/models/**/*'
-  # Add more directories or files to include if needed
+    - '**/bin/spring'
+    - '**/bin/setup'
+    - '**/bin/rake'
+    - '**/bin/rails'
+    - '**/db/schema.rb'
+    - 'client/**/**'
+    - 'config/**/**'
+    - 'db/**/**'
+    - 'bin/**'
+    - 'app/models/role.rb'
+    - 'vendor/*'
+    - '**/Gemfile'
+    - '**/Rakefile'
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
