@@ -1,0 +1,29 @@
+name: RuboCop
+
+on:
+  push:
+    branches:
+      - main  # Modify this to match your main branch name
+  pull_request:
+    branches:
+      - main  # Modify this to match your main branch name
+
+jobs:
+  rubocop:
+    name: RuboCop
+    runs-on: ubuntu-latest  # Modify the runner as needed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7  # Modify the Ruby version as needed
+
+      - name: Bundle install
+        run: bundle install --jobs 4 --retry 3 --path vendor/bundle
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
