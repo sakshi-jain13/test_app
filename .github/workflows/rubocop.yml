@@ -26,4 +26,4 @@ jobs:
         run: bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Run RuboCop
-        run: rubocop
+        run: bundle exec rubocop
