@@ -12,10 +12,5 @@ class DummyController < ApplicationController
         render json: { success: true, message: @message }, status: :created
       end
     end
-
-    def show
-        @message = "Hello, RuboCop!"
-        render json: { message: @message }
-    end
 end
 
