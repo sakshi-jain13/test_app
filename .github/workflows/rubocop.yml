@@ -1,12 +1,7 @@
-name: RuboCop Check
+name: RuboCop
 
 on:
   pull_request:
-    types:
-      - synchronize
-      - opened
-      - reopened
-  push:
     branches:
       - main
 
@@ -15,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Set up Ruby
@@ -29,10 +24,11 @@ jobs:
           bundle install --jobs 4 --retry 3
 
       - name: Run RuboCop
+        run: bundle exec rubocop
+
+      - name: Check RuboCop offenses
         run: |
-          # Check if the pull request is merging into or targeting the main branch
-          if [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "push" ]; then
-            bundle exec rubocop
-          else
-            echo "Skipping RuboCop check as the event is not a pull request or push to the main branch."
+          OUTPUT=$(bundle exec rubocop --format simple)
+          if echo "$OUTPUT" | grep -E '^(?:Offenses|==).*[1-9][0-9]* .*file' ; then
+            echo "RuboCop offenses found."
           fi
