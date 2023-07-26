@@ -39,6 +39,6 @@ jobs:
           if [[ $file == *.rb ]]; then
             ruby -c "$file"
           elif [[ $file == *.erb ]]; then
-            ruby -rerubis -e 'ERB.new(File.read(ARGV[0])).result' "$file"
+            erb -x -T - "$file" | ruby -c
           fi
         done
