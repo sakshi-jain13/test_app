@@ -27,6 +27,18 @@ jobs:
         gem install bundler
         bundle install --jobs 4 --retry 3
 
+    - name: Install dependencies
+      run: gem install erubis
+
     - name: Check Ruby syntax
       run: |
-        find . -name '*.rb' -exec ruby -c {} \;
+        # Find all .rb and .erb files in the repository
+        FILES=$(find . -name "*.rb" -o -name "*.erb")
+
+        for file in $FILES; do
+          if [[ $file == *.rb ]]; then
+            ruby -c "$file"
+          elif [[ $file == *.erb ]]; then
+            ruby -rerubis -e 'ERB.new(File.read(ARGV[0])).result' "$file"
+          fi
+        done
