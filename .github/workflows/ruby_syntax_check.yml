@@ -45,5 +45,3 @@ jobs:
             erb -x -T - "$file" | ruby -c
           fi
         done
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
