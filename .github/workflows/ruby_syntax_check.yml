@@ -30,20 +30,23 @@ jobs:
     - name: Install dependencies
       run: gem install erubis
 
-    - name: List PR Files
-      id: pr-files
+    - name: Get changed files
+      id: changed-files
       run: |
-        # Get the base commit (the common ancestor between the source and target branches)
-        BASE_COMMIT=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" | jq -r .base.sha)
+        PR_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files"
+        AUTH_HEADER="Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
 
-        # List the changed files in the PR using the base commit as reference
-        PR_FILES=$(git diff --name-only $BASE_COMMIT)
+        export CHANGED_FILES=$(curl -sSL -H "$AUTH_HEADER" "$PR_URL" | jq -r '.[].filename' | grep '\.rb$')
+        echo "Changed Ruby files in the pull request: $CHANGED_FILES"
 
-        echo "::set-output name=pr_files::$PR_FILES"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Print PR Files
+    - name: Check Ruby syntax
       run: |
-        echo "PR Files:"
-        echo "${{ steps.pr-files.outputs.pr_files }}"
+        # Find all .rb and .erb files in the repository
+
+        for file in $CHANGED_FILES; do
+          if [[ $file == *.rb ]]; then
+            ruby -c "$file"
+          elif [[ $file == *.erb ]]; then
+            erb -x -T - "$file" | ruby -c
+          fi
+        done
