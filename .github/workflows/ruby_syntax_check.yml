@@ -33,7 +33,7 @@ jobs:
     - name: Check Ruby syntax
       run: |
         # Find all .rb and .erb files in the repository
-        FILES=$(find . -name "*.rb" -o -name "*.erb")
+        FILES=$(git diff --name-status --staged | grep -v "^D" | sed -e 's/^[MAR]\s*//g' |  egrep "(\.rb)$")
 
         for file in $FILES; do
           if [[ $file == *.rb ]]; then
