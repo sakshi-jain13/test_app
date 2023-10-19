@@ -31,19 +31,19 @@ jobs:
       run: gem install erubis
 
     - name: List PR Files
-        id: pr-files
-        run: |
-          # Get the base commit (the common ancestor between the source and target branches)
-          BASE_COMMIT=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" | jq -r .base.sha)
-          
-          # List the changed files in the PR using the base commit as reference
-          PR_FILES=$(git diff --name-only $BASE_COMMIT)
+      id: pr-files
+      run: |
+        # Get the base commit (the common ancestor between the source and target branches)
+        BASE_COMMIT=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" | jq -r .base.sha)
 
-          echo "::set-output name=pr_files::$PR_FILES"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # List the changed files in the PR using the base commit as reference
+        PR_FILES=$(git diff --name-only $BASE_COMMIT)
 
-      - name: Print PR Files
-        run: |
-          echo "PR Files:"
-          echo "${{ steps.pr-files.outputs.pr_files }}"
+        echo "::set-output name=pr_files::$PR_FILES"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Print PR Files
+      run: |
+        echo "PR Files:"
+        echo "${{ steps.pr-files.outputs.pr_files }}"
