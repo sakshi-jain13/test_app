@@ -36,7 +36,7 @@ jobs:
         PR_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files"
         AUTH_HEADER="Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
 
-        export CHANGED_FILES=$(curl -sSL -H "$AUTH_HEADER" "$PR_URL" | jq -r '.[].filename' | grep '\.rb$')
+        export CHANGED_FILES=$(curl -sSL -H "$AUTH_HEADER" "$PR_URL" | jq -r '.[].filename' | grep -E '\.rb$|\.erb$')
         echo "Changed Ruby files in the pull request: $CHANGED_FILES"
 
     - name: Check Ruby syntax
