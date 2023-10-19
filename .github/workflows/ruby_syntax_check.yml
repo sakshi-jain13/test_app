@@ -46,7 +46,7 @@ jobs:
       run: |
         # Find all .rb and .erb files in the repository
 
-        for file in "$CHANGED_FILES"; do
+        for file in $CHANGED_FILES; do
           echo "Ruby file: $file"
           if [[ $file == *.rb ]]; then
             ruby -c "$file"
