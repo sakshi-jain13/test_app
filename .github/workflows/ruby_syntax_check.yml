@@ -36,4 +36,11 @@ jobs:
         BASE_COMMIT=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" | jq -r .base.sha)
         # List the changed files in the PR using the base commit as reference
         PR_FILES=$(git diff --name-only $BASE_COMMIT)
-        echo "::set-output name=pr_files::$PR_FILES"
+
+        for file in $PR_FILES; do
+          if [[ $file == *.rb ]]; then
+            ruby -c "$file"
+          elif [[ $file == *.erb ]]; then
+            erb -x -T - "$file" | ruby -c
+          fi
+        done
