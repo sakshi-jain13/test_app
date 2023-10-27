@@ -50,14 +50,32 @@ jobs:
         run: |
           changed_files=$(cat changed_files.txt)
           echo "Changed Ruby files in the pull request: $changed_files"
+          syntax_errors=0
+
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
               if [[ $file == *.rb ]]; then
-                ruby -c "$file"
+                if ruby -c "$file"; then
+                  echo "Ruby syntax check passed for $file"
+                else
+                  echo "Ruby syntax check failed for $file"
+                  syntax_errors=1
+                fi
               elif [[ $file == *.erb ]]; then
-                erb -x -T - "$file" | ruby -c
+                if erb -x -T - "$file" | ruby -c; then
+                  echo "ERB syntax check passed for $file"
+                else
+                  echo "ERB syntax check failed for $file"
+                  syntax_errors=1
+                fi
               fi
             done
+
+            if [ $syntax_errors -eq 0 ]; then
+              echo "No syntax errors found in Ruby or ERB files."
+            else
+              echo "Syntax errors were found in one or more files."
+            fi
           else
             echo "No Ruby or ERB files have changed."
           fi
