@@ -47,6 +47,10 @@ jobs:
 
       - name: Check Ruby syntax for changed files
         run: |
+          changed_files_json=$(cat output.json)
+          changed_files=$(echo "$changed_files_json" | jq -r '.changed_files[]')
+          echo "::set-output name=changed_files::$changed_files"
+
           changed_files=$(echo "${{ steps.changed-files.outputs }}")
           echo "Changed Ruby files in the pull request: $changed_files"
           if [ -n "$changed_files" ]; then
