@@ -20,6 +20,10 @@ jobs:
       - name: Check Out Code
         uses: actions/checkout@v2
 
+      - name: Fetch Main Branch
+        run: git fetch origin main:refs/remotes/origin/main
+        if: ${{ github.event_name == 'pull_request' }}
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
