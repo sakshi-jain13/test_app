@@ -48,7 +48,7 @@ jobs:
       - name: Check Ruby syntax for changed files
         run: |
           changed_files=$(cat changed_files.txt)
-          echo "::set-output name=changed_files::$changed_files"
+          echo "Changed Ruby files in the pull request: $changed_files"
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
               if [[ $file == *.rb ]]; then
