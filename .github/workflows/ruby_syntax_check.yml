@@ -41,18 +41,14 @@ jobs:
         id: changed-files
         run: |
           echo "Changed Files:"
-          git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '\.rb$|\.erb$'
+          git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '\.rb$|\.erb$' > changed_files.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check Ruby syntax for changed files
         run: |
-          changed_files_json=$(cat output.json)
-          changed_files=$(echo "$changed_files_json" | jq -r '.changed_files[]')
+          changed_files=$(cat changed_files.txt)
           echo "::set-output name=changed_files::$changed_files"
-
-          changed_files=$(echo "${{ steps.changed-files.outputs }}")
-          echo "Changed Ruby files in the pull request: $changed_files"
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
               if [[ $file == *.rb ]]; then
