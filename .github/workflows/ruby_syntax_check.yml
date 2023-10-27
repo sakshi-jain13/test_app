@@ -2,9 +2,14 @@ name: Ruby Syntax Check
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - '**/*.rb'
       - '**/*.erb'
+  push:
+    branches:
+      - main
 
 jobs:
   syntax-check:
