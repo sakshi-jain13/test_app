@@ -48,6 +48,7 @@ jobs:
       - name: Check Ruby syntax for changed files
         run: |
           changed_files=$(echo "${{ steps.changed-files.outputs.changed_files }}")
+          echo "Changed Ruby files in the pull request: $changed_files"
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
               if [[ $file == *.rb ]]; then
