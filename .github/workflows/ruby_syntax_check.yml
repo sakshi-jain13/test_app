@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - '**/*.rb'
+      - '**/*.erb'
   push:
     branches:
       - main
@@ -14,31 +17,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Check Out Code
+        uses: actions/checkout@v2
 
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.1.2
+      - name: Fetch Main Branch
+        run: git fetch
+        if: ${{ github.event_name == 'pull_request' }}
 
-    - name: Install dependencies
-      run: |
-        gem install bundler
-        bundle install --jobs 4 --retry 3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2 # Replace with your preferred Ruby version
 
-    - name: Install dependencies
-      run: gem install erubis
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
 
-    - name: Check Ruby syntax
-      run: |
-        # Find all .rb and .erb files in the repository
-        FILES=$(find . -name "*.rb" -o -name "*.erb")
+      - name: Install dependencies for ERB
+        run: gem install erubis
 
-        for file in $FILES; do
-          if [[ $file == *.rb ]]; then
-            ruby -c "$file"
-          elif [[ $file == *.erb ]]; then
-            erb -x -T - "$file" | ruby -c
+      - name: List Changed Files
+        id: changed-files
+        run: |
+          echo "PR Changed Files:"
+          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...origin/${{ github.event.pull_request.head.ref }} | grep -E '\.rb$|\.erb$' > changed_files.txt
+          cat changed_files.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check Ruby syntax for changed files
+        run: |
+          changed_files=$(cat changed_files.txt)
+          echo "Changed Ruby files in the pull request: $changed_files"
+          syntax_errors=0
+
+          if [ -n "$changed_files" ]; then
+            for file in $changed_files; do
+              if [[ $file == *.rb ]]; then
+                if ruby -c "$file"; then
+                  echo "Ruby syntax check passed for $file"
+                else
+                  echo "Ruby syntax check failed for $file"
+                  syntax_errors=1
+                fi
+              elif [[ $file == *.erb ]]; then
+                if erb -x -T - "$file" | ruby -c; then
+                  echo "ERB syntax check passed for $file"
+                else
+                  echo "ERB syntax check failed for $file"
+                  syntax_errors=1
+                fi
+              fi
+            done
+
+            if [ $syntax_errors -eq 0 ]; then
+              echo "No syntax errors found in Ruby or ERB files."
+            else
+              echo "Syntax errors were found in one or more files."
+            fi
+          else
+            echo "No Ruby or ERB files have changed."
           fi
-        done
