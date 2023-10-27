@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Fetch Main Branch
-        run: git fetch origin main:refs/remotes/origin/main
+        run: git fetch
         if: ${{ github.event_name == 'pull_request' }}
 
       - name: Set up Ruby
