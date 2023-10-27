@@ -41,7 +41,7 @@ jobs:
         id: changed-files
         run: |
           echo "PR Changed Files:"
-          git diff --name-only origin/${{ github.event.pull_request.base.ref }}..origin/${{ github.event.pull_request.head.ref }} > pr_changed_files.txt
+          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...origin/${{ github.event.pull_request.head.ref }} > pr_changed_files.txt
           cat pr_changed_files.txt
           echo "Changed Files:"
           git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '\.rb$|\.erb$' > changed_files.txt
