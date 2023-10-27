@@ -41,7 +41,7 @@ jobs:
         id: changed-files
         run: |
           echo "Changed Files:"
-          git diff --name-only origin/${{ github.base_ref }} ${{ github.head_ref }} | grep -E '\.rb$|\.erb$'
+          git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '\.rb$|\.erb$'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
